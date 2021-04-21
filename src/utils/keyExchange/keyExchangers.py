@@ -1,4 +1,4 @@
-from netinterface import network_interface
+from src.network.netinterface import network_interface
 from diffiehellman.diffiehellman import DiffieHellman
 from Crypto.Signature import pkcs1_15
 from Crypto.PublicKey.RSA import RsaKey

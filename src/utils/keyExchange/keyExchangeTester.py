@@ -1,5 +1,5 @@
 from keyExchangers import ClientKeyExchanger, ServerKeyExchanger
-from netinterface import network_interface
+from src.network.netinterface import network_interface
 from Crypto.PublicKey import RSA
 
 def test():

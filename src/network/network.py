@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 # network.py
 
-import os, sys, getopt, time
+import os
+import sys
+import getopt
+import time
 
-NET_PATH = '../../Desktop/BME/biztonsági protokollok/hf2/netsim/'
+NET_PATH = os.path.dirname(__file__) + '\\traffic\\'
 ADDR_SPACE = 'ABC'
-CLEAN = False
+CLEAN = True
 TIMEOUT = 0.500  # 500 millisec
 
 
@@ -15,11 +18,13 @@ def read_msg(src):
     out_dir = NET_PATH + src + '/OUT'
     msgs = sorted(os.listdir(out_dir))
 
-    if len(msgs) - 1 <= last_read[src]: return '', ''
+    if len(msgs) - 1 <= last_read[src]:
+        return '', ''
 
     next_msg = msgs[last_read[src] + 1]
     dsts = next_msg.split('--')[1]
-    with open(out_dir + '/' + next_msg, 'rb') as f: msg = f.read()
+    with open(out_dir + '/' + next_msg, 'rb') as f:
+        msg = f.read()
 
     last_read[src] += 1
     return msg, dsts
@@ -31,7 +36,8 @@ def write_msg(dst, msg):
 
     if len(msgs) > 0:
         last_msg = msgs[-1]
-        next_msg = (int.from_bytes(bytes.fromhex(last_msg), byteorder='big') + 1).to_bytes(2, byteorder='big').hex()
+        next_msg = (int.from_bytes(bytes.fromhex(last_msg),
+                    byteorder='big') + 1).to_bytes(2, byteorder='big').hex()
     else:
         next_msg = '0000'
 
@@ -46,9 +52,11 @@ def write_msg(dst, msg):
 # ------------
 
 try:
-    opts, args = getopt.getopt(sys.argv[1:], shortopts='hp:a:c', longopts=['help', 'path=', 'addrspace=', 'clean'])
+    opts, args = getopt.getopt(sys.argv[1:], shortopts='hp:a:c', longopts=[
+                               'help', 'path=', 'addrspace=', 'clean'])
 except getopt.GetoptError:
-    print('Usage: python network.py -p <network path> -a <address space> [--clean]')
+    print(
+        'Usage: python network.py -p <network path> -a <address space> [--clean]')
     sys.exit(1)
 
 # if len(opts) == 0:
@@ -57,7 +65,8 @@ except getopt.GetoptError:
 
 for opt, arg in opts:
     if opt == '-h' or opt == '--help':
-        print('Usage: python network.py -p <network path> -a <address space> [--clean]')
+        print(
+            'Usage: python network.py -p <network path> -a <address space> [--clean]')
         sys.exit(0)
     elif opt == '-p' or opt == '--path':
         NET_PATH = arg
@@ -74,7 +83,8 @@ if len(ADDR_SPACE) < 2:
 
 for addr in ADDR_SPACE:
     if addr not in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ':
-        print('Error: Addresses must be capital letters from the 26-element English alphabet.')
+        print(
+            'Error: Addresses must be capital letters from the 26-element English alphabet.')
         sys.exit(1)
 
 if (NET_PATH[-1] != '/') and (NET_PATH[-1] != '\\'):
@@ -95,7 +105,8 @@ print('--------------------------------------------')
 for addr in ADDR_SPACE:
     addr_dir = NET_PATH + addr
     if not os.path.exists(addr_dir):
-        print('Folder for address ' + addr + ' does not exist. Trying to create it... ', end='')
+        print('Folder for address ' + addr +
+              ' does not exist. Trying to create it... ', end='')
         os.mkdir(addr_dir)
         os.mkdir(addr_dir + '/IN')
         os.mkdir(addr_dir + '/OUT')
@@ -106,9 +117,11 @@ for addr in ADDR_SPACE:
 if CLEAN:
     for addr in ADDR_SPACE:
         in_dir = NET_PATH + addr + '/IN'
-        for f in os.listdir(in_dir): os.remove(in_dir + '/' + f)
+        for f in os.listdir(in_dir):
+            os.remove(in_dir + '/' + f)
         out_dir = NET_PATH + addr + '/OUT'
-        for f in os.listdir(out_dir): os.remove(out_dir + '/' + f)
+        for f in os.listdir(out_dir):
+            os.remove(out_dir + '/' + f)
 
 # initialize state (needed for tracking last read messages from OUT dirs)
 last_read = {}
@@ -124,7 +137,8 @@ while True:
     for src in ADDR_SPACE:
         msg, dsts = read_msg(src)  # read outgoing message
         if dsts != '':  # if read returned a message...
-            if dsts == '+': dsts = ADDR_SPACE  # handle broadcast address +
+            if dsts == '+':
+                dsts = ADDR_SPACE  # handle broadcast address +
             for dst in dsts:  # for all destinations of the message...
                 if dst in ADDR_SPACE:  # destination must be a valid address
                     write_msg(dst, msg)  # write incoming message
