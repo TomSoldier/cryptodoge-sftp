@@ -1,11 +1,10 @@
 import os
 import sys
 import getopt
-import time
 
-from ..utils.validation.validator import Validator
-from ..utils.validation.error import InputError
-from ..network.netinterface import network_interface
+from utils.validation.validator import Validator
+from utils.validation.error import InputError
+from network.netinterface import network_interface
 
 NET_PATH = os.path.abspath(os.path.join(
     os.path.dirname(__file__), '..\\network\\traffic\\'))
