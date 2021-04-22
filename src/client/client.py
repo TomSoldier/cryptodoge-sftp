@@ -2,8 +2,15 @@ import os
 import sys
 import getopt
 
+PACKAGE_PARENT = '..'
+SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd(), os.path.expanduser(__file__))))
+sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
+
+# noinspection PyUnresolvedReferences
 from utils.validation.validator import Validator
+# noinspection PyUnresolvedReferences
 from utils.validation.error import InputError
+# noinspection PyUnresolvedReferences
 from network.netinterface import network_interface
 
 NET_PATH = os.path.abspath(os.path.join(
