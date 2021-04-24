@@ -1,6 +1,7 @@
 import os
 import sys
 import getopt
+from Crypto.PublicKey import RSA
 
 PACKAGE_PARENT = '..'
 SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd(), os.path.expanduser(__file__))))
@@ -12,11 +13,18 @@ from utils.validation.validator import Validator
 from utils.validation.error import InputError
 # noinspection PyUnresolvedReferences
 from network.netinterface import network_interface
+# noinspection PyUnresolvedReferences
+from utils.keyExchange.keyExchangers import ClientKeyExchanger
 
-NET_PATH = os.path.abspath(os.path.join(
+'''NET_PATH = os.path.abspath(os.path.join(
     os.path.dirname(__file__), '..\\network\\traffic\\'))
-print(NET_PATH)
-OWN_ADDR = 'A'
+print(NET_PATH)'''
+
+# TODO: these were only added for convenience, should be removed in a future commit
+NET_PATH = "../network/files/"
+OWN_ADDR = "B"
+# TODO_END
+
 
 try:
     opts, args = getopt.getopt(sys.argv[1:], shortopts='hp:a:', longopts=[
@@ -48,12 +56,27 @@ if OWN_ADDR not in network_interface.addr_space:
     print('Error: Invalid address ' + OWN_ADDR)
     sys.exit(1)
 
+global pubKey
+if not os.path.exists("pubKey.pem"):
+    raise FileNotFoundError("File containing public key can't be found.")
+else:
+    with open("pubKey.pem", "r") as handle:
+        pubKey = RSA.import_key(handle.read())
+
+
 
 # main loop
 print('Main loop started')
-destination = 'B'
+serverAddr = 'A'
 validator = Validator()
 netif = network_interface(NET_PATH, OWN_ADDR)
+
+exchange = ClientKeyExchanger(
+                 netif,
+                 pubKey,
+                 serverAddr)
+symKey = exchange.clientExchangeKey()
+print(symKey)
 
 while True:
     msg = input('# ')
@@ -66,6 +89,6 @@ while True:
 
     try:
         if(validator.validate(msg)):
-            netif.send_msg(destination, msg.encode('utf-8'))
+            netif.send_msg(serverAddr, msg.encode('utf-8'))
     except InputError as err:
         print(err.message)

@@ -6,7 +6,8 @@ import sys
 import getopt
 import time
 
-NET_PATH = os.path.dirname(__file__) + '\\traffic\\'
+# TODO: added for convenience, should be removed in a later commit
+NET_PATH = "files"
 ADDR_SPACE = 'ABC'
 CLEAN = True
 TIMEOUT = 0.500  # 500 millisec

@@ -52,7 +52,7 @@ class ClientKeyExchanger(KeyExchanger):
 
     def __waitServerResponse(self):
         # TODO: this message might not be the one received from the server, this has to be checked
-        resp = self.interface.receive_msg(blocking=True)
+        status, resp = self.interface.receive_msg(blocking=True)
         name = resp[0:32]
         sugKey = resp[32:32+1024]
         body = resp[0: 32+1024]
