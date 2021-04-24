@@ -47,25 +47,31 @@ class Processor:
             self.__rmf(paramdict['path'])
 
     def __mkd(self, directory, path):
+        #TODO: check if given path is valid and is inside of users directory
         os.mkdir(os.path.join(self.CWD, path, directory))
 
     def __rmd(self, directory, path):
+        #TODO: check if given path is valid and is inside of users directory
         shutil.rmtree(os.path.join(self.CWD, path, directory))
 
     def __gwd(self):
         return self.CWD
 
     def __cwd(self, path):
+        #TODO: check if given path is valid and is inside of users directory
         pass
 
     def __lst(self):
         return os.listdir(self.CWD)
 
     def __upl(self, source_path, destination_path):
+        #TODO: check if given destination path is valid and is inside of users directory
         pass
 
     def __dnl(self, source_path, destination_path):
+        #TODO: check if source path is valid and is inside of users directory
         pass
 
     def __rmf(self, path):
+        #TODO: check if given path is valid and is inside of users directory
         os.remove(os.path.join(self.CWD, path))
