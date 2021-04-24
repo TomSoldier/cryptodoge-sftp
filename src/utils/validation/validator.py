@@ -88,7 +88,7 @@ class Validator:
     def validate(self, cmd):
         parts = cmd.split()
         c = parts[0].strip()
-        if(c in self.commands and self.__hasParams(c)):
+        if c in self.commands and self.__hasParams(c):
             return self.__validate_params(c, parts[1:])
         return c in self.commands
 
