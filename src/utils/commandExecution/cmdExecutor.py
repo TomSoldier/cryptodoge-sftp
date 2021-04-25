@@ -7,9 +7,9 @@ class CmdExecutor:
         self.root = os.getcwd()
 
     def __tmpCwd(self, path):
+        self.cwd = os.getcwd()
         if path == "":
             return
-        self.cwd = os.getcwd()
         os.chdir(path)
         if len(os.getcwd()) < len(self.root):
             os.chdir(self.root)
@@ -20,7 +20,7 @@ class CmdExecutor:
 
     def mkd(self, dir:str, path:str = ""):
         self.__tmpCwd(path)
-        os.makedirs(dir)
+        os.mkdir(dir)
         self.__revertTmpCwd()
 
     def rmd(self, dir:str, path:str):
@@ -35,7 +35,12 @@ class CmdExecutor:
         i = 0
         while i < len(cwd) and i < len(self.root) and cwd[i] == self.root[i]:
             i += 1
-        return ("/:"+cwd[i:]).encode("ascii")
+        retVal = cwd[i:]
+        if retVal == "":
+            retVal = ":\\"
+        else:
+            retVal = ":"+retVal
+        return retVal.encode("ascii")
 
     def cwd(self, path: str):
         os.chdir(path)
