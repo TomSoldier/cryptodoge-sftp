@@ -20,8 +20,10 @@ class CmdExecutor:
 
     def mkd(self, dir:str, path:str = ""):
         self.__tmpCwd(path)
-        os.mkdir(dir)
-        self.__revertTmpCwd()
+        try:
+            os.mkdir(dir)
+        finally:
+            self.__revertTmpCwd()
 
     def rmd(self, dir:str, path:str):
         self.__tmpCwd(path)
