@@ -1,5 +1,7 @@
+import os
+
 from Crypto.Cipher import AES
-from cipher import Cipher
+from utils.communication.cipher import Cipher
 
 class AesGcmCipher(Cipher):
 

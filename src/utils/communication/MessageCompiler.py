@@ -1,4 +1,4 @@
-from src.utils.communication.aesGcmCipher import AesGcmCipher
+from utils.communication.aesGcmCipher import AesGcmCipher
 
 class MessageCompiler:
     def __init__(self,

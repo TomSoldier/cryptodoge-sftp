@@ -16,6 +16,8 @@ from network.netinterface import network_interface
 # noinspection PyUnresolvedReferences
 from utils.keyExchange.keyExchangers import ClientKeyExchanger
 
+from utils.communication.MessageCompiler import MessageCompiler
+
 
 class Client:
     def __init__(self,
@@ -79,6 +81,14 @@ class Client:
             self.pubKey,
             self.serverAddr)
         self.symKey = exchange.clientExchangeKey()
+        status, msg = self.netif.receive_msg(blocking=True)
+        SID = msg[16:32]
+        self.messageCompiler = MessageCompiler(self.symKey, SID)
+        decryptedSID = self.messageCompiler.decompile(msg)
+        if SID != decryptedSID:
+            raise ValueError("SID in message doesnt match SID in header.")
+
+
 
     def run(self):
         print('Main loop started')

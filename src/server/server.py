@@ -1,16 +1,16 @@
 import getopt
 import os
 import sys
-import time
-import pickle as pkl
 from Crypto.PublicKey import RSA
 from Crypto.Random import get_random_bytes
-from src.server.logic.ClientInfo import Clients
-from src.utils.communication.MessageCompiler import MessageCompiler
+from logic.ClientInfo import Clients
 
 PACKAGE_PARENT = '..'
 SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd(), os.path.expanduser(__file__))))
 sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
+
+from utils.communication.MessageCompiler import MessageCompiler
+
 
 # noinspection PyUnresolvedReferences
 from network.netinterface import network_interface
@@ -135,5 +135,9 @@ except:
     try:
         Server(NET_PATH).run()
     except:
-        Server(ownAddr=OWN_ADDR).run()
+        try:
+            Server(ownAddr=OWN_ADDR).run()
+        except:
+            Server().run()
+
 
