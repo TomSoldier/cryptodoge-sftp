@@ -25,7 +25,7 @@ class CmdExecutor:
         finally:
             self.__revertTmpCwd()
 
-    def rmd(self, dir:str, path:str):
+    def rmd(self, dir:str, path:str = ""):
         self.__tmpCwd(path)
         try:
             os.rmdir(dir)
@@ -59,14 +59,15 @@ class CmdExecutor:
             fileString += el
         return fileString.encode("ascii")
 
-    def upl(self, file: bytes, filename: str, path: str):
+    def upl(self, file: bytes, filename: str, path: str = ""):
         self.__tmpCwd(path)
         try:
             with open(filename, "wb") as handle:
                 handle.write(file)
         finally:
             self.__revertTmpCwd()
-    def dnl(self, filename: str, path: str):
+
+    def dnl(self, filename: str, path: str = ""):
         self.__tmpCwd(path)
         try:
             with open(filename, "rb") as handle:
@@ -75,7 +76,7 @@ class CmdExecutor:
             self.__revertTmpCwd()
         return file
 
-    def rmf(self, filename: str, path: str):
+    def rmf(self, filename: str, path: str = ""):
         self.__tmpCwd(path)
         try:
             os.remove(filename)
