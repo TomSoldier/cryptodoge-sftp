@@ -95,3 +95,4 @@ class Server:
             if self.handleExchange(msg):
                 continue
 
+Server().run()
