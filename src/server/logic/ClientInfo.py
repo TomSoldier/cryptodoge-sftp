@@ -1,5 +1,6 @@
 import os
 import sys
+from typing import List
 
 PACKAGE_PARENT = '../..'
 SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd(), os.path.expanduser(__file__))))
@@ -9,7 +10,7 @@ from utils.communication.MessageCompiler import MessageCompiler
 
 class ClientInfo():
     def __init__(self,
-                 address,
+                 address: str,
                  sessionID: bytes,
                  msgCompiler: MessageCompiler):
         self.address = address
@@ -20,7 +21,7 @@ class Clients():
     
     def __init__(self):
         # ClientInfo list
-        self.clients = []
+        self.clients: List[ClientInfo] = []
 
     def add(self,
             address,
@@ -28,8 +29,12 @@ class Clients():
             msgCompiler: MessageCompiler):
         self.clients.append(ClientInfo(address,sessionID,msgCompiler))
 
-    def getBySID(sessionID):
-        pass
+    def getBySID(self, sessionID: bytes):
+        for el in self.clients:
+            if el.sessionID == sessionID:
+                return el
 
-    def getByAddr(address):
-        pass
+    def getByAddr(self, address: str):
+        for el in self.clients:
+            if el.address == address:
+                return el

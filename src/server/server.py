@@ -101,8 +101,8 @@ class Server:
         msgComp = MessageCompiler(symKey, sessionID)
         self.clients.add(clientAddr, sessionID, msgComp)
         # Send SessionID to client
-        msg = msgComp.compileFirstMessage()
-        self.netif.send_msg(clientAddr, msg)
+        sidTransferMessage = msgComp.compileFirstMessage()
+        self.netif.send_msg(clientAddr, sidTransferMessage)
 
     def run(self):
         print('Main loop started...')
