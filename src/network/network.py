@@ -66,8 +66,7 @@ except getopt.GetoptError:
 
 for opt, arg in opts:
     if opt == '-h' or opt == '--help':
-        print(
-            'Usage: python network.py -p <network path> -a <address space> [--clean]')
+        print('Usage: python network.py -p <network path> -a <address space> [--clean]')
         sys.exit(0)
     elif opt == '-p' or opt == '--path':
         NET_PATH = arg

@@ -61,7 +61,7 @@ class MessageCompiler:
 
     def decompile(self, msg:bytes):
         nonce = msg[0:16]
-        seqnum = int.from_bytes(msg[32:40], "big")
+        seqnum = int.from_bytes(msg[32:40],"big")
         length = int.from_bytes(msg[40:45],"big")
         header = msg[16:45]
         body = msg[45:48+length]
