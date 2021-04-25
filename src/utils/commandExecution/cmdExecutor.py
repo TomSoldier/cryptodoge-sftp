@@ -66,6 +66,7 @@ class CmdExecutor:
                 file = handle.read()
         finally:
             self.__revertTmpCwd()
+        return file
 
     def rmf(self, filename: str, path: str):
         self.__tmpCwd(path)
