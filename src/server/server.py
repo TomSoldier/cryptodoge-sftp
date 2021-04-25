@@ -1,3 +1,4 @@
+import getopt
 import os
 import sys
 from Crypto.PublicKey import RSA
@@ -84,8 +85,7 @@ class Server:
         exchangeSource = exchangeSource[:i + 1].decode("ascii")
 
         exchanger = ServerKeyExchanger(self.netif, self.privKey, exchangeSource, msg[32:])
-        symKey = exchanger.serverExchangeKey()
-        print(symKey)
+        self.symKey = exchanger.serverExchangeKey()
         return True
 
     def run(self):
@@ -95,4 +95,27 @@ class Server:
             if self.handleExchange(msg):
                 continue
 
-Server().run()
+
+try:
+    opts, args = getopt.getopt(sys.argv[1:], shortopts='hp:a:', longopts=[
+        'help', 'path=', 'addr='])
+except getopt.GetoptError:
+    print('Usage: python receiver.py -p <network path> -a <own addr>')
+    sys.exit(1)
+
+for opt, arg in opts:
+    if opt == '-h' or opt == '--help':
+        print('Usage: python receiver.py -p <network path> -a <own addr>')
+        sys.exit(0)
+    elif opt == '-p' or opt == '--path':
+        NET_PATH = arg
+    elif opt == '-a' or opt == '--addr':
+        OWN_ADDR = arg
+
+try:
+    Server(NET_PATH, OWN_ADDR).run()
+except:
+    try:
+        Server(NET_PATH).run()
+    except:
+        Server(ownAddr=OWN_ADDR).run()
