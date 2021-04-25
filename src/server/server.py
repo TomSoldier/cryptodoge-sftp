@@ -128,16 +128,12 @@ for opt, arg in opts:
     elif opt == '-a' or opt == '--addr':
         OWN_ADDR = arg
 
-
-try:
+if ('NET_PATH' in locals() or 'NET_PATH' in globals()) and ('OWN_ADDR' in locals() or 'OWN_ADDR' in globals()):
     Server(NET_PATH, OWN_ADDR).run()
-except:
-    try:
-        Server(NET_PATH).run()
-    except:
-        try:
-            Server(ownAddr=OWN_ADDR).run()
-        except:
-            Server().run()
-
+elif ('NET_PATH' not in locals() and 'NET_PATH' not in globals()) and ('OWN_ADDR' in locals() or 'OWN_ADDR' in globals()):
+    Server(ownAddr=OWN_ADDR).run()
+elif ('NET_PATH' in locals() or 'NET_PATH' in globals()) and ('OWN_ADDR' not in locals() and 'OWN_ADDR' not in globals()):
+    Server(NET_PATH).run()
+else:
+    Server().run()
 
