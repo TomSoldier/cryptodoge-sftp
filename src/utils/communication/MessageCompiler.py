@@ -69,6 +69,7 @@ class MessageCompiler:
 
         if not self.rcrSeqNum - 3 < seqnum < self.rcrSeqNum + 3:
             raise ValueError("Received sequence number doesn't match with stored.")
+        self.rcrSeqNum += 1
 
         plainBody = self.cipher.decrypt(nonce, header, body, tag)
 
