@@ -1,7 +1,7 @@
 import os
 
 class CmdExecutor:
-    def __init__(self, rootDir: str):
+    def __init__(self, rootDir: str = "./"):
         self.root = rootDir
         os.chdir(rootDir)
         self.root = os.getcwd()
