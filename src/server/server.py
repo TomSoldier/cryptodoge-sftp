@@ -18,6 +18,7 @@ from utils.communication.MessageCompiler import MessageCompiler
 from network.netinterface import network_interface
 # noinspection PyUnresolvedReferences
 from utils.keyExchange.keyExchangers import ServerKeyExchanger
+from logic.processor import Processor
 
 class Server:
 
@@ -117,6 +118,7 @@ class Server:
         h = MD5.new()
         h.update(passwd)
         if h.hexdigest() == users.users[username]:
+            self.processor = Processor(username)
             return True
         return False
 
@@ -131,6 +133,7 @@ class Server:
             d_cmd, d_msg = session.msgCompiler.decompile(msg)
             if d_cmd.decode('ascii') == 'lgn':
                 self.login(session, d_msg)
+            self.processor.process(d_msg.decode('ascii'))
 
 
 
