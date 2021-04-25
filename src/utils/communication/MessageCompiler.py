@@ -10,8 +10,8 @@ class MessageCompiler:
         :param sessionId: has to be 16 byte long
         :param initSeqNum: initial sequence number
         '''
-        if len(symKey) > 16:
-            symKey = symKey[-16:]
+        if len(symKey) > 32:
+            symKey = symKey[-32:]
         self.cipher = AesGcmCipher(symKey)
         self.rcrSeqNum = initSeqNum
         self.sndSeqNum = initSeqNum

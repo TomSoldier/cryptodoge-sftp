@@ -91,7 +91,7 @@ class Server:
         exchangeSource = exchangeSource[:i + 1].decode("ascii")
 
         exchanger = ServerKeyExchanger(self.netif, self.privKey, exchangeSource, msg[32:])
-        self.symKey = exchanger.serverExchangeKey()
+        self.symKey: bytes = exchanger.serverExchangeKey()
         self.handleClientInfo(self.symKey,exchangeSource)
         return True
 
@@ -102,7 +102,7 @@ class Server:
         self.clients.add(clientAddr, sessionID, msgComp)
         # Send SessionID to client
         msg = msgComp.compileFirstMessage()
-        self.netif.send_msg(clientAddr, msg.encode('utf-8'))
+        self.netif.send_msg(clientAddr, msg)
 
     def run(self):
         print('Main loop started...')

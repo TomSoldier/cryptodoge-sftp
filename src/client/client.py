@@ -84,8 +84,9 @@ class Client:
         status, msg = self.netif.receive_msg(blocking=True)
         SID = msg[16:32]
         self.messageCompiler = MessageCompiler(self.symKey, SID)
-        decryptedSID = self.messageCompiler.decompile(msg)
-        if SID != decryptedSID:
+        cmd, decryptedSID = self.messageCompiler.decompile(msg)
+        zero = (0).to_bytes(3, "big")
+        if SID != decryptedSID or cmd != zero:
             raise ValueError("SID in message doesnt match SID in header.")
 
 

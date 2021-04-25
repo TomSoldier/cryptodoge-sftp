@@ -54,8 +54,8 @@ class ClientKeyExchanger(KeyExchanger):
 
         serverSugKeyInt = int.from_bytes(serverSugKey, "big")
         self.keyGen.generate_shared_secret(serverSugKeyInt)
-
-        return self.keyGen.shared_key
+        shared_key = self.keyGen.shared_key
+        return bytes.fromhex(shared_key)
 
     def __waitServerResponse(self):
         # TODO: this message might not be the one received from the server, this has to be checked
@@ -98,8 +98,8 @@ class ServerKeyExchanger(KeyExchanger):
 
         clientSugKeyInt = int.from_bytes(self.clientSugKey, "big")
         self.keyGen.generate_shared_secret(clientSugKeyInt)
-
-        return self.keyGen.shared_key
+        shared_key = self.keyGen.shared_key
+        return bytes.fromhex(shared_key)
 
     def _sign(self, body):
         signer = pkcs1_15.new(self.privateSignatureKey)
