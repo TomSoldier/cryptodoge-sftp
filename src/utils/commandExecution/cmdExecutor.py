@@ -33,9 +33,9 @@ class CmdExecutor:
     def gwd(self):
         cwd = os.getcwd()
         i = 0
-        while cwd[i] == self.root[i]:
+        while i < len(cwd) and i < len(self.root) and cwd[i] == self.root[i]:
             i += 1
-        return cwd[i:].encode("ascii")
+        return ("/:"+cwd[i:]).encode("ascii")
 
     def cwd(self, path: str):
         os.chdir(path)
@@ -74,3 +74,4 @@ class CmdExecutor:
             os.remove(filename)
         finally:
             self.__revertTmpCwd()
+
