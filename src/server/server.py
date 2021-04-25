@@ -1,7 +1,12 @@
 import getopt
 import os
 import sys
+import time
+import pickle as pkl
 from Crypto.PublicKey import RSA
+from Crypto.Random import get_random_bytes
+from src.server.logic.ClientInfo import Clients
+from src.utils.communication.MessageCompiler import MessageCompiler
 
 PACKAGE_PARENT = '..'
 SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd(), os.path.expanduser(__file__))))
@@ -19,6 +24,7 @@ class Server:
                  ownAddr: str = "A"):
         self.netPath = netPath
         self.ownAddr = ownAddr
+        self.clients = Clients()
 
         self.init()
 
@@ -86,7 +92,17 @@ class Server:
 
         exchanger = ServerKeyExchanger(self.netif, self.privKey, exchangeSource, msg[32:])
         self.symKey = exchanger.serverExchangeKey()
+        self.handleClientInfo(symKey,exchangeSource)
         return True
+
+    def handleClientInfo(symKey:bytes, clientAddr):
+        # Generate Client parameters, and save them
+        sessionID = get_random_bytes(16)    
+        msgComp = MessageCompiler(symKey,sessionID)
+        self.clients.add(clientAddr, sessionID, msgComp)
+        # Send SessionID to client
+        msg = msgComp.compileFirstMessage()
+        netif.send_msg(clientAddr, msg.encode('utf-8'))
 
     def run(self):
         print('Main loop started...')
@@ -112,6 +128,7 @@ for opt, arg in opts:
     elif opt == '-a' or opt == '--addr':
         OWN_ADDR = arg
 
+
 try:
     Server(NET_PATH, OWN_ADDR).run()
 except:
@@ -119,3 +136,4 @@ except:
         Server(NET_PATH).run()
     except:
         Server(ownAddr=OWN_ADDR).run()
+
