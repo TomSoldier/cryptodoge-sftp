@@ -16,5 +16,5 @@ class Cipher:
     tag: tag part of message
     '''
     @abstractmethod
-    def decrypt(self, header: bytes, ciphertext: bytes, tag: bytes):
+    def decrypt(self, nonce:bytes, header: bytes, ciphertext: bytes, tag: bytes):
         pass
