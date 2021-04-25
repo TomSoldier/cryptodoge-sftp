@@ -4,6 +4,9 @@ import getopt
 from Crypto.PublicKey import RSA
 import time
 import pickle as pkl
+from Crypto.Random import get_random_bytes
+from src.server.logic.ClientInfo import Clients
+from src.utils.communication.MessageCompiler import MessageCompiler
 
 PACKAGE_PARENT = '..'
 SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd(), os.path.expanduser(__file__))))
@@ -39,7 +42,7 @@ for opt, arg in opts:
         OWN_ADDR = arg
 
 # TODO: these were only added for convenience, should be removed in a future commit
-NET_PATH = "../network/files/"
+NET_PATH = "src/network/files/"
 OWN_ADDR = "A"
 # TODO_END
 
@@ -59,7 +62,7 @@ if OWN_ADDR not in network_interface.addr_space:
 
 global privKey
 global pubKey
-if not os.path.exists("privKey.pem"):
+if not os.path.exists("src/client/pubKey.pem"):
     privKey=RSA.generate(1024)
     pubKey=privKey.public_key()
     with open("privKey.pem", "wb") as handle:
@@ -68,12 +71,24 @@ else:
     with open("privKey.pem", "r") as handle:
         privKey = RSA.import_key(handle.read())
 
-if not os.path.exists("../client/pubKey.pem"):
-    with open("../client/pubKey.pem", "wb") as handle:
+if not os.path.exists("src/client/pubKey.pem"):
+    with open("src/client/pubKey.pem", "wb") as handle:
         handle.write(pubKey.export_key("PEM"))
 # main loop
 netif = network_interface(NET_PATH, OWN_ADDR)
 print('Main loop started...')
+
+clients = Clients()
+
+def handleClientInfo(symKey:bytes, clientAddr):
+    # Generate Client parameters, and save them
+    sessionID = get_random_bytes(16)    
+    msgComp = MessageCompiler(symKey,sessionID)
+    clients.add(clientAddr, get_random_bytes(16), msgComp)
+    # Send SessionID to client
+    msg = msgComp.compileFirstMessage()
+    netif.send_msg(clientAddr, msg.encode('utf-8'))
+
 
 def handleExchange(msg):
     if len(msg) != 32+1024:
@@ -87,9 +102,11 @@ def handleExchange(msg):
 
     exchanger = ServerKeyExchanger(netif, privKey, exchangeSource, msg[32:])
     symKey = exchanger.serverExchangeKey()
+    
+    handleClientInfo(symKey,exchangeSource)
+    
     print(symKey)
     return True
-
 
 while True:
     status, msg = netif.receive_msg(blocking=True)
