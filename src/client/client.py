@@ -30,6 +30,7 @@ class Client:
         self.validator = Validator()
         self.pubKey = None
         self.symKey = None
+        self.loggedIn = False
 
         self.init()
 
@@ -89,8 +90,6 @@ class Client:
         if SID != decryptedSID or cmd != zero:
             raise ValueError("SID in message doesnt match SID in header.")
 
-
-
     def run(self):
         print('Main loop started')
         self.exchangeKeys()
@@ -103,9 +102,19 @@ class Client:
             if msg == "help":
                 self.validator.help()
 
+            if not self.loggedIn and not msg.startswith('lgn'):
+                continue
+
             try:
                 if self.validator.validate(msg):
-                    self.netif.send_msg(self.serverAddr, msg.encode('utf-8'))
+                    cmd = msg.split(' ')[0]
+                    compiled = self.messageCompiler.compile(msg.encode('ascii'), cmd.encode('ascii'))
+                    for c in compiled:
+                        self.netif.send_msg(self.serverAddr,c)
+                    if self.validator.hasResult(cmd):
+                        status, msg = self.netif.receive_msg(blocking=True)
+                        d_cmd, d_plain = self.messageCompiler.decompile(msg)
+                        print(d_plain)
             except InputError as err:
                 print(err.message)
 

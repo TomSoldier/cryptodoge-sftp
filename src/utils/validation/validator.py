@@ -4,6 +4,7 @@ optional = "optional"
 mandatory = "mandatory"
 description = "description"
 example = "example"
+hasResult = "hasResult"
 
 
 class Validator:
@@ -14,63 +15,75 @@ class Validator:
                 mandatory: ["dir"],
                 optional: ["path"],
                 description: "Used to create a folder.",
-                example: "mkd --dir=\"dir\" OR mkd --dir=\"dir\" --path=\"path\""
+                example: "mkd --dir=\"dir\" OR mkd --dir=\"dir\" --path=\"path\"",
+                hasResult: False
             },
             "rmd": {
                 mandatory: ["dir"],
                 optional: ["path"],
                 description: "Used to remove a folder and its content.",
-                example: "rmd --dir=\"dir\" OR rmd --dir=\"dir\" --path=\"path\""
+                example: "rmd --dir=\"dir\" OR rmd --dir=\"dir\" --path=\"path\"",
+                hasResult: False
             },
             "gwd": {
                 mandatory: [],
                 optional: [],
                 description: "Used to get the current working directory name.",
-                example: "gwd"
+                example: "gwd",
+                hasResult: True
             },
             "cwd": {
                 mandatory: ["path"],
                 optional: [],
                 description: "Used to change the current working directory.",
-                example: "mkd --path=\"path\""
+                example: "mkd --path=\"path\"",
+                hasResult: False
             },
             "lst": {
                 mandatory: [],
                 optional: [],
                 description: "Used to list all the files in the current working directory.",
-                example: "lst"
+                example: "lst",
+                hasResult: True
             },
             "upl": {
                 mandatory: ["spath"],
                 optional: ["ddir"],
                 description: "Used to upload files to the server.",
-                example: "upl --spath=\"spath\" OR mkd --spath=\"spath\" --ddir=\"ddir\""
+                example: "upl --spath=\"spath\" OR mkd --spath=\"spath\" --ddir=\"ddir\"",
+                hasResult: False
             },
             "dnl": {
                 mandatory: ["spath"],
                 optional: ["ddir"],
                 description: "Used to download files from the server.",
-                example: "dnl --spath=\"spath\" OR mkd --spath=\"spath\" --ddir=\"ddir\""
+                example: "dnl --spath=\"spath\" OR mkd --spath=\"spath\" --ddir=\"ddir\"",
+                hasResult: False
             },
             "rmf": {
                 mandatory: ["path"],
                 optional: [],
                 description: "Used to delete a file from the server.",
-                example: "rmf --path=\"path\""
+                example: "rmf --path=\"path\"",
+                hasResult: False
             },
-            "login": {
+            "lgn": {
                 mandatory: ["user", "pwd"],
                 optional: [],
                 description: "Used to login to the server.",
-                example: "login --user=\"user\" --pwd=\"pwd\""
+                example: "lgn --user=\"user\" --pwd=\"pwd\"",
+                hasResult: True
             },
-            "exit": {
+            "ext": {
                 mandatory: [],
                 optional: [],
                 description: "Used to exit from the program.",
-                example: "exit"
+                example: "ext"
             },
         }
+
+    def hasResult(self, cmd):
+        return self.commands[cmd][hasResult]
 
     def __validate_params(self, cmd, params):
         p = []

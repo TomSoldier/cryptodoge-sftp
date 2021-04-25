@@ -12,10 +12,13 @@ class ClientInfo():
     def __init__(self,
                  address: str,
                  sessionID: bytes,
-                 msgCompiler: MessageCompiler):
+                 msgCompiler: MessageCompiler,
+                 userName: ''):
         self.address = address
         self.sessionID = sessionID
         self.msgCompiler = msgCompiler
+        self.userName = userName
+        self.banned = False
 
 class Clients():
     
@@ -27,7 +30,7 @@ class Clients():
             address,
             sessionID: bytes,
             msgCompiler: MessageCompiler):
-        self.clients.append(ClientInfo(address,sessionID,msgCompiler))
+        self.clients.append(ClientInfo(address,sessionID,msgCompiler, ''))
 
     def getBySID(self, sessionID: bytes):
         for el in self.clients:

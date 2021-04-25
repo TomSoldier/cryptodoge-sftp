@@ -3,7 +3,9 @@ import os
 import sys
 from Crypto.PublicKey import RSA
 from Crypto.Random import get_random_bytes
+from Crypto.Hash import MD5
 from logic.ClientInfo import Clients
+from users import users
 
 PACKAGE_PARENT = '..'
 SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd(), os.path.expanduser(__file__))))
@@ -104,12 +106,32 @@ class Server:
         sidTransferMessage = msgComp.compileFirstMessage()
         self.netif.send_msg(clientAddr, sidTransferMessage)
 
+    def login(self, session, msg):
+        print(msg)
+        parts = msg.decode('ascii').split(' ')
+        username = parts[1].split('=')[1]
+        passwd = parts[2].split('=')[1].encode('ascii')
+        if username not in users.users:
+            return False
+
+        h = MD5.new()
+        h.update(passwd)
+        if h.hexdigest() == users.users[username]:
+            return True
+        return False
+
     def run(self):
         print('Main loop started...')
         while True:
             status, msg = self.netif.receive_msg(blocking=True)
             if self.handleExchange(msg):
                 continue
+            SID = msg[16:32]
+            session = self.clients.getBySID(SID)
+            d_cmd, d_msg = session.msgCompiler.decompile(msg)
+            if d_cmd.decode('ascii') == 'lgn':
+                self.login(session, d_msg)
+
 
 
 try:
