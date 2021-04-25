@@ -1,4 +1,3 @@
-import getopt
 import os
 import sys
 from Crypto.PublicKey import RSA
@@ -25,6 +24,22 @@ class Server:
         self.initKeys()
 
     def init(self):
+        '''try:
+            opts, args = getopt.getopt(sys.argv[1:], shortopts='hp:a:', longopts=[
+                'help', 'path=', 'addr='])
+        except getopt.GetoptError:
+            print('Usage: python receiver.py -p <network path> -a <own addr>')
+            sys.exit(1)
+        
+        for opt, arg in opts:
+            if opt == '-h' or opt == '--help':
+                print('Usage: python receiver.py -p <network path> -a <own addr>')
+                sys.exit(0)
+            elif opt == '-p' or opt == '--path':
+                NET_PATH = arg
+            elif opt == '-a' or opt == '--addr':
+                OWN_ADDR = arg
+        '''
         if (self.netPath[-1] != '/') and (self.netPath[-1] != '\\'):
             self.netPath += '/'
 
@@ -79,22 +94,5 @@ class Server:
             status, msg = self.netif.receive_msg(blocking=True)
             if self.handleExchange(msg):
                 continue
-
-
-try:
-    opts, args = getopt.getopt(sys.argv[1:], shortopts='hp:a:', longopts=[
-        'help', 'path=', 'addr='])
-except getopt.GetoptError:
-    print('Usage: python receiver.py -p <network path> -a <own addr>')
-    sys.exit(1)
-
-for opt, arg in opts:
-    if opt == '-h' or opt == '--help':
-        print('Usage: python receiver.py -p <network path> -a <own addr>')
-        sys.exit(0)
-    elif opt == '-p' or opt == '--path':
-        NET_PATH = arg
-    elif opt == '-a' or opt == '--addr':
-        OWN_ADDR = arg
 
 Server().run()
