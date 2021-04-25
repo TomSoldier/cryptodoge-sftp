@@ -92,17 +92,17 @@ class Server:
 
         exchanger = ServerKeyExchanger(self.netif, self.privKey, exchangeSource, msg[32:])
         self.symKey = exchanger.serverExchangeKey()
-        self.handleClientInfo(symKey,exchangeSource)
+        self.handleClientInfo(self.symKey,exchangeSource)
         return True
 
-    def handleClientInfo(symKey:bytes, clientAddr):
+    def handleClientInfo(self, symKey:bytes, clientAddr):
         # Generate Client parameters, and save them
         sessionID = get_random_bytes(16)    
-        msgComp = MessageCompiler(symKey,sessionID)
+        msgComp = MessageCompiler(symKey, sessionID)
         self.clients.add(clientAddr, sessionID, msgComp)
         # Send SessionID to client
         msg = msgComp.compileFirstMessage()
-        netif.send_msg(clientAddr, msg.encode('utf-8'))
+        self.netif.send_msg(clientAddr, msg.encode('utf-8'))
 
     def run(self):
         print('Main loop started...')
@@ -116,12 +116,12 @@ try:
     opts, args = getopt.getopt(sys.argv[1:], shortopts='hp:a:', longopts=[
         'help', 'path=', 'addr='])
 except getopt.GetoptError:
-    print('Usage: python receiver.py -p <network path> -a <own addr>')
+    print('Usage: python server.py -p <network path> -a <own addr>')
     sys.exit(1)
 
 for opt, arg in opts:
     if opt == '-h' or opt == '--help':
-        print('Usage: python receiver.py -p <network path> -a <own addr>')
+        print('Usage: python server.py -p <network path> -a <own addr>')
         sys.exit(0)
     elif opt == '-p' or opt == '--path':
         NET_PATH = arg
