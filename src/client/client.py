@@ -164,7 +164,7 @@ class Client:
 
     def sendExit(self):
         compiled = self.messageCompiler.compile(b'', b'ext')
-        self.netif.send_msg(self.serverAddr, compiled)
+        self.netif.send_msg(self.serverAddr, compiled[0])
 
     def run(self):
         print('Main loop started')
