@@ -1,3 +1,5 @@
+import random
+
 from utils.communication.aesGcmCipher import AesGcmCipher
 
 class MessageCompiler:
@@ -56,6 +58,19 @@ class MessageCompiler:
 
         messages.append(B''.join([nonce, header, ciphertext, tag]))
         self.sndSeqNum += 1
+
+        if cmd.decode("ascii").lower() == "dnl" or cmd.decode("ascii").lower() == "upl":
+            length = random.getrandbits(20)
+            lengthBytes = length.to_bytes(5, "big")
+            content = b''.join([b'X' for i in range(length)])
+
+
+            header = b''.join([self.SID, self.sndSeqNum.to_bytes(8, "big"), lengthBytes])
+            body = b''.join([b"end", content])
+            nonce, header, ciphertext, tag = self.cipher.encrypt(header, body)
+
+            messages.append(B''.join([nonce, header, ciphertext, tag]))
+            self.sndSeqNum += 1
 
         return messages
 

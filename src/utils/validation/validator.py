@@ -15,14 +15,14 @@ class Validator:
                 mandatory: ["dir"],
                 optional: ["path"],
                 description: "Used to create a folder.",
-                example: "mkd --dir=\"dir\" OR mkd --dir=\"dir\" --path=\"path\"",
+                example: "mkd -dir=dir OR mkd -dir=dir -path=path",
                 hasResult: False
             },
             "rmd": {
                 mandatory: ["dir"],
                 optional: ["path"],
                 description: "Used to remove a folder and its content.",
-                example: "rmd --dir=\"dir\" OR rmd --dir=\"dir\" --path=\"path\"",
+                example: "rmd -dir=dir OR rmd -dir=dir -path=path",
                 hasResult: False
             },
             "gwd": {
@@ -36,7 +36,7 @@ class Validator:
                 mandatory: ["path"],
                 optional: [],
                 description: "Used to change the current working directory.",
-                example: "mkd --path=\"path\"",
+                example: "cwd -path=path",
                 hasResult: False
             },
             "lst": {
@@ -50,35 +50,36 @@ class Validator:
                 mandatory: ["spath"],
                 optional: ["ddir"],
                 description: "Used to upload files to the server.",
-                example: "upl --spath=\"spath\" OR mkd --spath=\"spath\" --ddir=\"ddir\"",
+                example: "upl -spath=spath OR upl -spath=spath -ddir=ddir",
                 hasResult: False
             },
             "dnl": {
                 mandatory: ["spath"],
                 optional: ["ddir"],
                 description: "Used to download files from the server.",
-                example: "dnl --spath=\"spath\" OR mkd --spath=\"spath\" --ddir=\"ddir\"",
-                hasResult: False
+                example: "dnl -spath=spath OR mkd -spath=spath -ddir=ddir",
+                hasResult: True
             },
             "rmf": {
                 mandatory: ["path"],
                 optional: [],
                 description: "Used to delete a file from the server.",
-                example: "rmf --path=\"path\"",
+                example: "rmf -path=path",
                 hasResult: False
             },
             "lgn": {
                 mandatory: ["user", "pwd"],
                 optional: [],
                 description: "Used to login to the server.",
-                example: "lgn --user=\"user\" --pwd=\"pwd\"",
+                example: "lgn --user=user --pwd=pwd",
                 hasResult: True
             },
             "ext": {
                 mandatory: [],
                 optional: [],
                 description: "Used to exit from the program.",
-                example: "ext"
+                example: "ext",
+                hasResult: False
             },
         }
 
@@ -89,6 +90,8 @@ class Validator:
         p = []
         for param in params:
             p.append(param.split("=")[0].replace('-', ''))
+            if param == "file":
+                break
 
         if not all(i in p for i in self.commands[cmd][mandatory]):
             raise InputError("Not all mandatory parameters specified.")

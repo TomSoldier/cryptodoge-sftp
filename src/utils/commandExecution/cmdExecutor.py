@@ -1,5 +1,11 @@
 import os
-from SuperTmpCwdHandler import SuperTmpHandler
+import sys
+
+PACKAGE_PARENT = '../..'
+SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd(), os.path.expanduser(__file__))))
+sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
+
+from utils.commandExecution.SuperTmpCwdHandler import SuperTmpHandler
 
 class CmdExecutor:
     def __init__(self, rootDir: str = "./"):
@@ -67,11 +73,7 @@ class CmdExecutor:
     def lst(self):
         handler = SuperTmpHandler().superTmpCwd(self.currentWorkDir)
         files = os.listdir()
-        for i in range(len(files)):
-            files[i] = files[i]+"\n"
-        fileString = ""
-        for el in files:
-            fileString += el
+        fileString = "\n".join(files)
         handler.revertSuperTmpCwd()
         return fileString.encode("ascii")
 

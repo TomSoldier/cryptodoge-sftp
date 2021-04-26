@@ -90,6 +90,82 @@ class Client:
         if SID != decryptedSID or cmd != zero:
             raise ValueError("SID in message doesnt match SID in header.")
 
+    @staticmethod
+    def getProp(msg, prop):
+        wMsg = msg.replace('-', '')
+        wMsg = wMsg.replace("=", " ")
+        wMsg = wMsg.replace("\"", " ")
+
+        msgArr = wMsg.split(" ")
+
+        for i in range(len(msgArr)):
+            if msgArr[i].lower() == prop:
+                return msgArr[i + 1]
+
+    @staticmethod
+    def getFilename(path):
+        return path.split("(\\\\|/)")[-1]
+
+    @staticmethod
+    def makeUplMsg(msg):
+        spath = Client.getProp(msg, "spath")
+        filename = Client.getFilename(spath)
+
+        with open(spath, "rb") as handle:
+            file = handle.read()
+
+        message = "upl"
+
+        message += " -filename=" + filename
+
+        wMsg = msg.replace('-', '')
+        wMsg = wMsg.replace("=", " ")
+        wMsg = wMsg.replace("\"", " ")
+
+        msgArr = wMsg.split(" ")
+
+        if "ddir" in msgArr:
+            ddir = msgArr[msgArr.index("ddir") + 1]
+            message += " -ddir=" + ddir
+        message += " -file="
+        message += file.decode("ascii")
+        return message
+
+    def handleLgnResult(self, d_plain: bytes):
+        self.loggedIn = d_plain == b'True'
+        if self.loggedIn:
+            print("login successful")
+        else:
+            print("login error")
+
+    def handleDnlResult(self, d_plain: bytes):
+        status, msg = self.netif.receive_msg(blocking=True)
+        d_cmd, tmpMsg = self.messageCompiler.decompile(msg)
+        while d_cmd.decode("ascii") != "end":
+            d_plain += tmpMsg
+            status, msg = self.netif.receive_msg(blocking=True)
+            d_cmd, tmpMsg = self.messageCompiler.decompile(msg)
+        origCwd = os.getcwd()
+        os.chdir(self.dnlDestDir)
+        with open(self.dnlFilename, "wb") as handle:
+            handle.write(d_plain)
+        os.chdir(origCwd)
+
+    def handleResults(self):
+        status, msg = self.netif.receive_msg(blocking=True)
+        d_cmd, d_plain = self.messageCompiler.decompile(msg)
+
+        if d_cmd == b'lgn':
+            self.handleLgnResult(d_plain)
+        elif d_cmd == b'dnl':
+            self.handleDnlResult(d_plain)
+        else:
+            print(d_plain.decode("ascii"))
+
+    def sendExit(self):
+        compiled = self.messageCompiler.compile(b'', b'ext')
+        network_interface.send_msg(self.serverAddr, compiled)
+
     def run(self):
         print('Main loop started')
         self.exchangeKeys()
@@ -97,6 +173,7 @@ class Client:
             msg = input('# ')
 
             if msg == 'exit':
+                self.sendExit()
                 break
 
             if msg == "help":
@@ -108,13 +185,24 @@ class Client:
             try:
                 if self.validator.validate(msg):
                     cmd = msg.split(' ')[0]
+
+                    if cmd == "upl":
+                        msg = self.makeUplMsg(msg)
+                    if cmd == "dnl":
+                        spath = Client.getProp(msg, "spath")
+                        self.dnlFilename = Client.getFilename(spath)
+                        self.dnlDestDir = Client.getProp(msg, "ddir")
+                        if self.dnlDestDir is None:
+                            self.dnlDestDir = "./"
+
+
                     compiled = self.messageCompiler.compile(msg.encode('ascii'), cmd.encode('ascii'))
+
                     for c in compiled:
                         self.netif.send_msg(self.serverAddr,c)
                     if self.validator.hasResult(cmd):
-                        status, msg = self.netif.receive_msg(blocking=True)
-                        d_cmd, d_plain = self.messageCompiler.decompile(msg)
-                        print(d_plain)
+                        self.handleResults()
+
             except InputError as err:
                 print(err.message)
 

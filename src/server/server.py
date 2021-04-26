@@ -132,16 +132,33 @@ class Server:
             SID = msg[16:32]
             session = self.clients.getBySID(SID)
             d_cmd, d_msg = session.msgCompiler.decompile(msg)
-            if d_cmd.decode('ascii') == 'lgn':
+
+            if d_cmd == b'lgn':
                 result = self.login(session, d_msg.decode('ascii'))
-                msgs = session.msgCompiler.compile(str(result).encode('ascii'), b'')
+                msgs = session.msgCompiler.compile(str(result).encode('ascii'), b'lgn')
                 for m in msgs:
                     self.netif.send_msg(session.address, m)
+            if d_cmd == b'ext':
+                self.clients.removeBySID(SID)
+
             else:
                 try:
-                    self.processor.process(d_msg.decode('ascii'))
+                    if d_cmd == b'upl' or d_cmd == b'dnl':
+                        origCmd = d_cmd
+                        status, msg = self.netif.receive_msg(blocking=True)
+                        d_cmd, tmpMsg = session.msgCompiler.decompile(msg)
+                        while d_cmd.decode("ascii") != "end":
+                            d_msg += tmpMsg
+                            status, msg = self.netif.receive_msg(blocking=True)
+                            d_cmd, tmpMsg = session.msgCompiler.decompile(msg)
+                        d_cmd = origCmd
+                    ret = self.processor.process(d_msg.decode('ascii'))
+                    if ret is not None:
+                        retMsg = session.msgCompiler.compile(ret, d_cmd)
+                        for m in retMsg:
+                            self.netif.send_msg(session.address, m)
                 except Exception as ex:
-                    msgs = session.msgCompiler.compile(str(ex).encode('ascii'), b'')
+                    msgs = session.msgCompiler.compile(str(ex).encode('ascii'), b'err')
                     for m in msgs:
                         self.netif.send_msg(session.address, m)
 

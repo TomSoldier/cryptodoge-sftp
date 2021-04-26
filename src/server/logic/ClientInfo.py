@@ -41,3 +41,9 @@ class Clients():
         for el in self.clients:
             if el.address == address:
                 return el
+
+    def removeBySID(self, sessionID: bytes):
+        for el in self.clients:
+            if el.sessionID == sessionID:
+                self.clients.remove(el)
+
