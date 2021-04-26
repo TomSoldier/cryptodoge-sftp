@@ -13,7 +13,7 @@ class ClientInfo():
                  address: str,
                  sessionID: bytes,
                  msgCompiler: MessageCompiler,
-                 userName: ''):
+                 userName: str = ""):
         self.address = address
         self.sessionID = sessionID
         self.msgCompiler = msgCompiler

@@ -4,7 +4,7 @@ import sys
 from Crypto.PublicKey import RSA
 from Crypto.Random import get_random_bytes
 from Crypto.Hash import MD5
-from logic.ClientInfo import Clients
+from logic.ClientInfo import Clients,ClientInfo
 from users import users
 
 PACKAGE_PARENT = '..'
@@ -107,7 +107,7 @@ class Server:
         sidTransferMessage = msgComp.compileFirstMessage()
         self.netif.send_msg(clientAddr, sidTransferMessage)
 
-    def login(self, session, msg):
+    def login(self, session: ClientInfo, msg):
         print(msg)
         parts = msg.split(' ')
         username = parts[1].split('=')[1]
