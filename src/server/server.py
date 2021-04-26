@@ -107,7 +107,7 @@ class Server:
         sidTransferMessage = msgComp.compileFirstMessage()
         self.netif.send_msg(clientAddr, sidTransferMessage)
 
-    def login(self, session: ClientInfo, msg):
+    def login(self, session: ClientInfo, msg: str):
         print(msg)
         parts = msg.split(' ')
         username = parts[1].split('=')[1]
