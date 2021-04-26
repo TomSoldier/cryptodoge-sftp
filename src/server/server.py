@@ -109,7 +109,7 @@ class Server:
 
     def login(self, session, msg):
         print(msg)
-        parts = msg.decode('ascii').split(' ')
+        parts = msg.split(' ')
         username = parts[1].split('=')[1]
         passwd = parts[2].split('=')[1].encode('ascii')
         if username not in users.users:
@@ -118,6 +118,7 @@ class Server:
         h = MD5.new()
         h.update(passwd)
         if h.hexdigest() == users.users[username]:
+            session.userName = username
             self.processor = Processor(username)
             return True
         return False
@@ -132,8 +133,18 @@ class Server:
             session = self.clients.getBySID(SID)
             d_cmd, d_msg = session.msgCompiler.decompile(msg)
             if d_cmd.decode('ascii') == 'lgn':
-                self.login(session, d_msg)
-            self.processor.process(d_msg.decode('ascii'))
+                result = self.login(session, d_msg.decode('ascii'))
+                msgs = session.msgCompiler.compile(str(result).encode('ascii'), b'')
+                for m in msgs:
+                    self.netif.send_msg(session.address, m)
+            else:
+                try:
+                    self.processor.process(d_msg.decode('ascii'))
+                except Exception as ex:
+                    msgs = session.msgCompiler.compile(str(ex).encode('ascii'), b'')
+                    for m in msgs:
+                        self.netif.send_msg(session.address, m)
+
 
 
 
@@ -152,6 +163,10 @@ for opt, arg in opts:
         NET_PATH = arg
     elif opt == '-a' or opt == '--addr':
         OWN_ADDR = arg
+
+for u in users.users:
+    if not os.path.exists(u):
+        os.mkdir(u)
 
 if ('NET_PATH' in locals() or 'NET_PATH' in globals()) and ('OWN_ADDR' in locals() or 'OWN_ADDR' in globals()):
     Server(NET_PATH, OWN_ADDR).run()
