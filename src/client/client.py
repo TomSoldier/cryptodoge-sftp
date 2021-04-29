@@ -138,7 +138,7 @@ class Client:
             print("login successful")
         else:
             if d_plain == b'Banned':
-                print("user is banned for 1 hour")
+                print("This user is banned, try again later (ban time is 1 hour, from the 3rd wrong attempt)")
             else:
                 print("login error")
 
