@@ -58,7 +58,6 @@ class ClientKeyExchanger(KeyExchanger):
         return bytes.fromhex(shared_key)
 
     def __waitServerResponse(self):
-        # TODO: this message might not be the one received from the server, this has to be checked
         status, resp = self.interface.receive_msg(blocking=True)
         name = resp[0:32]
         sugKey = resp[32:32+1024]

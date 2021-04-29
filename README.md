@@ -1,18 +1,20 @@
 # cryptodoge-sftp
 
-## How to start the modules
+This document summarizes general information about “secure FTP” design by the “CryptoDoge” team. The purpose of the software is to implement the defensive homework of Security Protocols, “secure FTP”, focusing on the highest possible level of security.
 
-From the **root folder** of the project, use the following commands in command line or PowerShell:
+## How to start
+
+We used JetBrains PyCharm Community Edition as a development environment, so recommended to run it from the IDE:
+The program has not been tested in different environments. (command line, etc.)
 
 **The starting order should be as follows:**
 
-`python -m src.network.network`
+`network`
 
-`python -m src.server.server`
+`server`
 
-`python -m src.client.client`
+`client`
 
-**NOTES:**
+**NOTES**:
 
-Without modules the relative imports in the folder structure can not be handled.
-**\_\_init\_\_.py** files used to handle modules. They can be empty.
+Our team used a network simulation library published by the instructor.

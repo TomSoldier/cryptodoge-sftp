@@ -133,10 +133,14 @@ class Client:
 
     def handleLgnResult(self, d_plain: bytes):
         self.loggedIn = d_plain == b'True'
+        print(d_plain)
         if self.loggedIn:
             print("login successful")
         else:
-            print("login error")
+            if d_plain == b'Banned':
+                print("user is banned for 1 hour")
+            else:
+                print("login error")
 
     def handleDnlResult(self, d_plain: bytes):
         status, msg = self.netif.receive_msg(blocking=True)

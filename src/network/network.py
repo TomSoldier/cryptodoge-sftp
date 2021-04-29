@@ -6,7 +6,6 @@ import sys
 import getopt
 import time
 
-# TODO: added for convenience, should be removed in a later commit
 NET_PATH = "files"
 ADDR_SPACE = 'ABC'
 CLEAN = True
@@ -59,10 +58,6 @@ except getopt.GetoptError:
     print(
         'Usage: python network.py -p <network path> -a <address space> [--clean]')
     sys.exit(1)
-
-# if len(opts) == 0:
-# 	print('Usage: python network.py -p <network path> -a <address space> [--clean]')
-# 	sys.exit(1)
 
 for opt, arg in opts:
     if opt == '-h' or opt == '--help':

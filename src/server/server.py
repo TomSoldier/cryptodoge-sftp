@@ -3,8 +3,9 @@ import os
 import sys
 from Crypto.PublicKey import RSA
 from Crypto.Random import get_random_bytes
-from Crypto.Hash import MD5
-from logic.ClientInfo import Clients,ClientInfo
+from Crypto.Hash import SHA3_512
+from logic.ClientInfo import Clients, ClientInfo
+from logic.ban import BanSystem
 from users import users
 
 PACKAGE_PARENT = '..'
@@ -28,28 +29,13 @@ class Server:
         self.netPath = netPath
         self.ownAddr = ownAddr
         self.clients = Clients()
+        self.ban_system = BanSystem(users.users)
 
         self.init()
 
         self.initKeys()
 
     def init(self):
-        '''try:
-            opts, args = getopt.getopt(sys.argv[1:], shortopts='hp:a:', longopts=[
-                'help', 'path=', 'addr='])
-        except getopt.GetoptError:
-            print('Usage: python receiver.py -p <network path> -a <own addr>')
-            sys.exit(1)
-        
-        for opt, arg in opts:
-            if opt == '-h' or opt == '--help':
-                print('Usage: python receiver.py -p <network path> -a <own addr>')
-                sys.exit(0)
-            elif opt == '-p' or opt == '--path':
-                NET_PATH = arg
-            elif opt == '-a' or opt == '--addr':
-                OWN_ADDR = arg
-        '''
         if (self.netPath[-1] != '/') and (self.netPath[-1] != '\\'):
             self.netPath += '/'
 
@@ -108,20 +94,28 @@ class Server:
         self.netif.send_msg(clientAddr, sidTransferMessage)
 
     def login(self, session: ClientInfo, msg: str):
-        print(msg)
         parts = msg.split(' ')
         username = parts[1].split('=')[1]
         passwd = parts[2].split('=')[1].encode('ascii')
         if username not in users.users:
-            return False
+            return 'False'
 
-        h = MD5.new()
+        if self.ban_system.is_banned(username):
+            return 'Banned'
+
+        h = SHA3_512.new()
         h.update(passwd)
         if h.hexdigest() == users.users[username]:
             session.userName = username
             self.processor = Processor(username)
-            return True
-        return False
+            return 'True'
+        else:
+            self.ban_system.attempt(username)
+
+        if self.ban_system.get_attempts(username) >= 3:
+            return 'Banned'
+
+        return 'False'
 
     def run(self):
         print('Main loop started...')
@@ -138,7 +132,7 @@ class Server:
                 msgs = session.msgCompiler.compile(str(result).encode('ascii'), b'lgn')
                 for m in msgs:
                     self.netif.send_msg(session.address, m)
-            if d_cmd == b'ext':
+            elif d_cmd == b'ext':
                 self.clients.removeBySID(SID)
 
             else:

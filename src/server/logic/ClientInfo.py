@@ -18,7 +18,6 @@ class ClientInfo():
         self.sessionID = sessionID
         self.msgCompiler = msgCompiler
         self.userName = userName
-        self.banned = False
 
 class Clients():
     
