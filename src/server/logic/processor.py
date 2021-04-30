@@ -12,7 +12,7 @@ class Processor:
                 mandatory: ["filename", "file"],
                 optional: ["ddir"],
                 description: "Used to upload files to the server.",
-                example: "upl --spath=spath OR upl --spath=spath --ddir=ddir",
+                example: "upl -spath=spath OR upl -spath=spath -ddir=ddir",
                 hasResult: False
             }
         self.executor = CmdExecutor(user_home_dir)

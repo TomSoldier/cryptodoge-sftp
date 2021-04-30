@@ -71,7 +71,7 @@ class Validator:
                 mandatory: ["user", "pwd"],
                 optional: [],
                 description: "Used to login to the server.",
-                example: "lgn --user=user --pwd=pwd",
+                example: "lgn -user=user -pwd=pwd",
                 hasResult: True
             },
             "ext": {

@@ -22,6 +22,8 @@ class CmdExecutor:
     def __tmpCwd(self, path):
         if path == "":
             return
+        if not os.path.exists(path):
+            os.makedirs(path)
         os.chdir(path)
         if len(os.getcwd()) < len(self.root):
             os.chdir(self.root)
