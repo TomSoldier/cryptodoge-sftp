@@ -1,6 +1,7 @@
 import os
 import sys
 import getopt
+import re
 from Crypto.PublicKey import RSA
 
 PACKAGE_PARENT = '..'
@@ -103,8 +104,8 @@ class Client:
                 return msgArr[i + 1]
 
     @staticmethod
-    def getFilename(path):
-        return path.split("(\\\\|/)")[-1]
+    def getFilename(path: str):
+        return re.split("(\\\\|/)", path)[-1]
 
     @staticmethod
     def makeUplMsg(msg):
