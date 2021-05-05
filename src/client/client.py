@@ -135,7 +135,6 @@ class Client:
 
     def handleLgnResult(self, d_plain: bytes):
         self.loggedIn = d_plain == b'True'
-        print(d_plain)
         if self.loggedIn:
             print("login successful")
         else:
