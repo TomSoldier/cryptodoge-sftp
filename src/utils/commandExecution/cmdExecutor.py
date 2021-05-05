@@ -90,7 +90,7 @@ class CmdExecutor:
 
     def dnl(self, filename: str):
         handler = SuperTmpHandler().superTmpCwd(self.currentWorkDir)
-        self.__tmpCwd(self.root)
+        self.__tmpCwd(self.currentWorkDir)
         try:
             with open(filename, "rb") as handle:
                 file = handle.read()
