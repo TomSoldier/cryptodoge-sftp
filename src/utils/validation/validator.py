@@ -57,7 +57,7 @@ class Validator:
                 mandatory: ["spath"],
                 optional: ["ddir"],
                 description: "Used to download files from the server.",
-                example: "dnl -spath=spath OR mkd -spath=spath -ddir=ddir",
+                example: "dnl -spath=spath OR dnl -spath=spath -ddir=ddir",
                 hasResult: True
             },
             "rmf": {
@@ -74,11 +74,11 @@ class Validator:
                 example: "lgn -user=user -pwd=pwd",
                 hasResult: True
             },
-            "ext": {
+            "exit": {
                 mandatory: [],
                 optional: [],
                 description: "Used to exit from the program.",
-                example: "ext",
+                example: "exit",
                 hasResult: False
             },
         }
