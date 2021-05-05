@@ -88,9 +88,9 @@ class CmdExecutor:
         finally:
             handler.revertSuperTmpCwd()
 
-    def dnl(self, filename: str, path: str = ""):
+    def dnl(self, filename: str):
         handler = SuperTmpHandler().superTmpCwd(self.currentWorkDir)
-        self.__tmpCwd(path)
+        self.__tmpCwd(self.root)
         try:
             with open(filename, "rb") as handle:
                 file = handle.read()

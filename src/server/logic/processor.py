@@ -60,7 +60,7 @@ class Processor:
             return None
         elif cmd == "dnl":
             paramdict = self.__get_param_values(parts[1:])
-            return self.executor.dnl(paramdict['spath'], paramdict['ddir'] if 'ddir' in paramdict else "")
+            return self.executor.dnl(paramdict['spath'])
         elif cmd == "rmf":
             paramdict = self.__get_param_values(parts[1:])
             self.executor.rmf(paramdict['path'])

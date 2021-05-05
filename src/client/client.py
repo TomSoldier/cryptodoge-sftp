@@ -103,6 +103,7 @@ class Client:
             if msgArr[i].lower() == prop:
                 return msgArr[i + 1]
 
+    #change
     @staticmethod
     def getFilename(path: str):
         return re.split("(\\\\|/)", path)[-1]
